@@ -1,0 +1,37 @@
+# .github/workflows/lint.yml
+name: Linting and Formatting Check
+
+on:
+  # Run this workflow on every push and pull request to the main branch
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest # GitHub provides a fast Linux runner
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11' # Specify the Python version to use
+
+      - name: Install Ruff
+        run: pip install ruff
+
+      - name: Run Ruff Format (Check Mode)
+        # This command FAILS the job if any files are not formatted correctly.
+        run: |
+          echo "Checking formatting with ruff..."
+          ruff format . --check
+
+      - name: Run Ruff Check (Linting)
+        # This command FAILS the job if any linting errors (e.g., unused imports) are found.
+        run: |
+          echo "Checking linting with ruff..."
+          ruff check .
