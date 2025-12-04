@@ -1,0 +1,38 @@
+# .github/workflows/docs.yml
+name: Documentation Build and Artifact Upload
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build_docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install documentation dependencies
+        # Install Sphinx and the theme needed for the build
+        run: |
+          python -m pip install --upgrade pip
+          pip install sphinx sphinx-rtd-theme
+
+      - name: Build Sphinx Documentation
+        # We use 'source' for the input and '_build' for the output directory
+        run: sphinx-build -b html source _build
+
+      - name: Upload Documentation Artifact
+        # This stores the built HTML documentation as a downloadable ZIP file
+        uses: actions/upload-artifact@v4
+        with:
+          name: html-documentation
+          path: _build/
+          retention-days: 5
+
+
